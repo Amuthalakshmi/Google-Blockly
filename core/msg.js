@@ -19,7 +19,7 @@
  */
 
 /**
- * @fileoverview Empty name space for the Message singleton.
+ * @fileoverview Core JavaScript library for Blockly.
  * @author scr@google.com (Sheridan Rawlins)
  */
 'use strict';

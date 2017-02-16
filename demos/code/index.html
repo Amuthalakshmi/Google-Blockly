@@ -11,7 +11,6 @@
   <script src="../../javascript_compressed.js"></script>
   <script src="../../python_compressed.js"></script>
   <script src="../../php_compressed.js"></script>
-  <script src="../../lua_compressed.js"></script>
   <script src="../../dart_compressed.js"></script>
   <script src="code.js"></script>
 </head>
@@ -40,8 +39,6 @@
             <td class="tabmin">&nbsp;</td>
             <td id="tab_php" class="taboff">PHP</td>
             <td class="tabmin">&nbsp;</td>
-            <td id="tab_lua" class="taboff">Lua</td>
-            <td class="tabmin">&nbsp;</td>
             <td id="tab_dart" class="taboff">Dart</td>
             <td class="tabmin">&nbsp;</td>
             <td id="tab_xml" class="taboff">XML</td>
@@ -67,14 +64,13 @@
   </table>
   <div id="content_blocks" class="content"></div>
   <pre id="content_javascript" class="content"></pre>
-  <pre id="content_python" class="content"></pre>
   <pre id="content_php" class="content"></pre>
-  <pre id="content_lua" class="content"></pre>
+  <pre id="content_python" class="content"></pre>
   <pre id="content_dart" class="content"></pre>
   <textarea id="content_xml" class="content" wrap="off"></textarea>
 
   <xml id="toolbox" style="display: none">
-    <category name="{catLogic}" colour="210">
+    <category id="catLogic" colour="210">
       <block type="controls_if"></block>
       <block type="logic_compare"></block>
       <block type="logic_operation"></block>
@@ -83,7 +79,7 @@
       <block type="logic_null"></block>
       <block type="logic_ternary"></block>
     </category>
-    <category name="{catLoops}" colour="120">
+    <category id="catLoops" colour="120">
       <block type="controls_repeat_ext">
         <value name="TIMES">
           <shadow type="math_number">
@@ -112,7 +108,7 @@
       <block type="controls_forEach"></block>
       <block type="controls_flow_statements"></block>
     </category>
-    <category name="{catMath}" colour="230">
+    <category id="catMath" colour="230">
       <block type="math_number"></block>
       <block type="math_arithmetic">
         <value name="A">
@@ -145,6 +141,13 @@
         <value name="NUMBER_TO_CHECK">
           <shadow type="math_number">
             <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_change">
+        <value name="DELTA">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
           </shadow>
         </value>
       </block>
@@ -199,7 +202,7 @@
       </block>
       <block type="math_random_float"></block>
     </category>
-    <category name="{catText}" colour="160">
+    <category id="catText" colour="160">
       <block type="text"></block>
       <block type="text_join"></block>
       <block type="text_append">
@@ -224,7 +227,7 @@
       <block type="text_indexOf">
         <value name="VALUE">
           <block type="variables_get">
-            <field name="VAR">{textVariable}</field>
+            <field name="VAR">text</field>
           </block>
         </value>
         <value name="FIND">
@@ -236,14 +239,14 @@
       <block type="text_charAt">
         <value name="VALUE">
           <block type="variables_get">
-            <field name="VAR">{textVariable}</field>
+            <field name="VAR">text</field>
           </block>
         </value>
       </block>
       <block type="text_getSubstring">
         <value name="STRING">
           <block type="variables_get">
-            <field name="VAR">{textVariable}</field>
+            <field name="VAR">text</field>
           </block>
         </value>
       </block>
@@ -276,7 +279,7 @@
         </value>
       </block>
     </category>
-    <category name="{catLists}" colour="260">
+    <category id="catLists" colour="260">
       <block type="lists_create_with">
         <mutation items="0"></mutation>
       </block>
@@ -293,28 +296,28 @@
       <block type="lists_indexOf">
         <value name="VALUE">
           <block type="variables_get">
-            <field name="VAR">{listVariable}</field>
+            <field name="VAR">list</field>
           </block>
         </value>
       </block>
       <block type="lists_getIndex">
         <value name="VALUE">
           <block type="variables_get">
-            <field name="VAR">{listVariable}</field>
+            <field name="VAR">list</field>
           </block>
         </value>
       </block>
       <block type="lists_setIndex">
         <value name="LIST">
           <block type="variables_get">
-            <field name="VAR">{listVariable}</field>
+            <field name="VAR">list</field>
           </block>
         </value>
       </block>
       <block type="lists_getSublist">
         <value name="LIST">
           <block type="variables_get">
-            <field name="VAR">{listVariable}</field>
+            <field name="VAR">list</field>
           </block>
         </value>
       </block>
@@ -325,9 +328,8 @@
           </shadow>
         </value>
       </block>
-      <block type="lists_sort"></block>
     </category>
-    <category name="{catColour}" colour="20">
+    <category id="catColour" colour="20">
       <block type="colour_picker"></block>
       <block type="colour_random"></block>
       <block type="colour_rgb">
@@ -366,8 +368,8 @@
       </block>
     </category>
     <sep></sep>
-    <category name="{catVariables}" colour="330" custom="VARIABLE"></category>
-    <category name="{catFunctions}" colour="290" custom="PROCEDURE"></category>
+    <category id="catVariables" colour="330" custom="VARIABLE"></category>
+    <category id="catFunctions" colour="290" custom="PROCEDURE"></category>
   </xml>
 
 </body>

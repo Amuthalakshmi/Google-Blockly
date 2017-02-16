@@ -58,18 +58,17 @@ Blockly.ContextMenu.show = function(e, options, rtl) {
   */
   var menu = new goog.ui.Menu();
   menu.setRightToLeft(rtl);
-  for (var i = 0, option; option = options[i]; i++) {
+  for (var x = 0, option; option = options[x]; x++) {
     var menuItem = new goog.ui.MenuItem(option.text);
     menuItem.setRightToLeft(rtl);
     menu.addChild(menuItem, true);
     menuItem.setEnabled(option.enabled);
     if (option.enabled) {
-      goog.events.listen(menuItem, goog.ui.Component.EventType.ACTION,
-                         option.callback);
-      menuItem.handleContextMenu = function(e) {
-        // Right-clicking on menu option should count as a click.
-        goog.events.dispatchEvent(this, goog.ui.Component.EventType.ACTION);
+      var evtHandlerCapturer = function(callback) {
+        return function() { Blockly.doCommand(callback); };
       };
+      goog.events.listen(menuItem, goog.ui.Component.EventType.ACTION,
+                         evtHandlerCapturer(option.callback));
     }
   }
   goog.events.listen(menu, goog.ui.Component.EventType.ACTION,
@@ -80,10 +79,7 @@ Blockly.ContextMenu.show = function(e, options, rtl) {
   var div = Blockly.WidgetDiv.DIV;
   menu.render(div);
   var menuDom = menu.getElement();
-  Blockly.utils.addClass(menuDom, 'blocklyContextMenu');
-  // Prevent system context menu when right-clicking a Blockly context menu.
-  Blockly.bindEventWithChecks_(menuDom, 'contextmenu', null,
-                               Blockly.utils.noEvent);
+  Blockly.addClass_(menuDom, 'blocklyContextMenu');
   // Record menuSize after adding menu.
   var menuSize = goog.style.getSize(menuDom);
 
@@ -130,24 +126,16 @@ Blockly.ContextMenu.hide = function() {
  */
 Blockly.ContextMenu.callbackFactory = function(block, xml) {
   return function() {
-    Blockly.Events.disable();
-    try {
-      var newBlock = Blockly.Xml.domToBlock(xml, block.workspace);
-      // Move the new block next to the old block.
-      var xy = block.getRelativeToSurfaceXY();
-      if (block.RTL) {
-        xy.x -= Blockly.SNAP_RADIUS;
-      } else {
-        xy.x += Blockly.SNAP_RADIUS;
-      }
-      xy.y += Blockly.SNAP_RADIUS * 2;
-      newBlock.moveBy(xy.x, xy.y);
-    } finally {
-      Blockly.Events.enable();
+    var newBlock = Blockly.Xml.domToBlock(block.workspace, xml);
+    // Move the new block next to the old block.
+    var xy = block.getRelativeToSurfaceXY();
+    if (block.RTL) {
+      xy.x -= Blockly.SNAP_RADIUS;
+    } else {
+      xy.x += Blockly.SNAP_RADIUS;
     }
-    if (Blockly.Events.isEnabled() && !newBlock.isShadow()) {
-      Blockly.Events.fire(new Blockly.Events.Create(newBlock));
-    }
+    xy.y += Blockly.SNAP_RADIUS * 2;
+    newBlock.moveBy(xy.x, xy.y);
     newBlock.select();
   };
 };

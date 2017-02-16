@@ -71,11 +71,9 @@ Blockly.Blocks['controls_repeat'] = {
       "message0": Blockly.Msg.CONTROLS_REPEAT_TITLE,
       "args0": [
         {
-          "type": "field_number",
+          "type": "field_input",
           "name": "TIMES",
-          "value": 10,
-          "min": 0,
-          "precision": 1
+          "text": "10"
         }
       ],
       "previousStatement": null,
@@ -86,6 +84,8 @@ Blockly.Blocks['controls_repeat'] = {
     });
     this.appendStatementInput('DO')
         .appendField(Blockly.Msg.CONTROLS_REPEAT_INPUT_DO);
+    this.getField('TIMES').setChangeHandler(
+        Blockly.FieldTextInput.nonnegativeIntegerValidator);
   }
 };
 
@@ -169,6 +169,26 @@ Blockly.Blocks['controls_for'] = {
     });
   },
   /**
+   * Return all variables referenced by this block.
+   * @return {!Array.<string>} List of variable names.
+   * @this Blockly.Block
+   */
+  getVars: function() {
+    return [this.getFieldValue('VAR')];
+  },
+  /**
+   * Notification that a variable is renaming.
+   * If the name matches one of this block's variables, rename it.
+   * @param {string} oldName Previous name of variable.
+   * @param {string} newName Renamed variable.
+   * @this Blockly.Block
+   */
+  renameVar: function(oldName, newName) {
+    if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
+      this.setFieldValue(newName, 'VAR');
+    }
+  },
+  /**
    * Add menu option to create getter block for loop variable.
    * @param {!Array} options List of menu options to add to.
    * @this Blockly.Block
@@ -222,6 +242,26 @@ Blockly.Blocks['controls_forEach'] = {
           thisBlock.getFieldValue('VAR'));
     });
   },
+  /**
+   * Return all variables referenced by this block.
+   * @return {!Array.<string>} List of variable names.
+   * @this Blockly.Block
+   */
+  getVars: function() {
+    return [this.getFieldValue('VAR')];
+  },
+  /**
+   * Notification that a variable is renaming.
+   * If the name matches one of this block's variables, rename it.
+   * @param {string} oldName Previous name of variable.
+   * @param {string} newName Renamed variable.
+   * @this Blockly.Block
+   */
+  renameVar: function(oldName, newName) {
+    if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
+      this.setFieldValue(newName, 'VAR');
+    }
+  },
   customContextMenu: Blockly.Blocks['controls_for'].customContextMenu
 };
 
@@ -253,18 +293,18 @@ Blockly.Blocks['controls_flow_statements'] = {
   /**
    * Called whenever anything on the workspace changes.
    * Add warning if this flow block is not nested inside a loop.
-   * @param {!Blockly.Events.Abstract} e Change event.
    * @this Blockly.Block
    */
-  onchange: function(e) {
-    if (!this.workspace.isDragging || this.workspace.isDragging()) {
-      return;  // Don't change state at the start of a drag.
-    }
+  onchange: function() {
     var legal = false;
     // Is the block nested in a loop?
     var block = this;
     do {
-      if (this.LOOP_TYPES.indexOf(block.type) != -1) {
+      if (block.type == 'controls_repeat' ||
+          block.type == 'controls_repeat_ext' ||
+          block.type == 'controls_forEach' ||
+          block.type == 'controls_for' ||
+          block.type == 'controls_whileUntil') {
         legal = true;
         break;
       }
@@ -272,21 +312,8 @@ Blockly.Blocks['controls_flow_statements'] = {
     } while (block);
     if (legal) {
       this.setWarningText(null);
-      if (!this.isInFlyout) {
-        this.setDisabled(false);
-      }
     } else {
       this.setWarningText(Blockly.Msg.CONTROLS_FLOW_STATEMENTS_WARNING);
-      if (!this.isInFlyout && !this.getInheritedDisabled()) {
-        this.setDisabled(true);
-      }
     }
-  },
-  /**
-   * List of block types that are loops and thus do not need warnings.
-   * To add a new loop type add this to your code:
-   * Blockly.Blocks['controls_flow_statements'].LOOP_TYPES.push('custom_loop');
-   */
-  LOOP_TYPES: ['controls_repeat', 'controls_repeat_ext', 'controls_forEach',
-      'controls_for', 'controls_whileUntil']
+  }
 };
